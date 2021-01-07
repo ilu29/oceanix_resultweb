@@ -1,0 +1,8 @@
+2020-11-19 06:51:15,718:INFO:Initializing load_model()
+2020-11-19 06:51:15,718:INFO:load_model(model_name=deployment_28042020, platform=None, authentication=None, verbose=True)
+2020-11-19 07:22:03,924:INFO:Initializing load_model()
+2020-11-19 07:22:03,924:INFO:load_model(model_name=deployment_28042020, platform=None, authentication=None, verbose=True)
+2020-11-19 07:22:28,919:INFO:Initializing load_model()
+2020-11-19 07:22:28,920:INFO:load_model(model_name=deployment_28042020, platform=None, authentication=None, verbose=True)
+2020-11-19 07:31:21,395:INFO:Initializing load_model()
+2020-11-19 07:31:21,395:INFO:load_model(model_name=deployment_28042020, platform=None, authentication=None, verbose=True)
