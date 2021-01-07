@@ -1,8 +1,24 @@
 import os
 import json
+import re
+
+
+prefix_folder="jupyter-"
+
+def getUserFromFolder(folder_name):
+    m = re.search('jupyter-([\S]*)\s*', folder_name)
+    if m:
+        found = m.group(1)
+    else:
+        found=None
+    return found
+
+
+def generateUserPath(path,user):
+    return os.path.join(path, prefix_folder+user)
 
 def openUserFile(path,user,fname,mode):
-    userpath=os.path.join(path, user)
+    userpath=generateUserPath(path,user)
     filepath=os.path.join(userpath, fname)
     file=None
     if os.path.isdir(userpath):
@@ -19,18 +35,18 @@ def openUserFile(path,user,fname,mode):
 def getUserslistFromDir(path):
     res=None
     try:
-        res=[ item for item in os.listdir(path) if os.path.isdir(os.path.join(path, item)) ]
+        res=[ getUserFromFolder(item) for item in os.listdir(path) if os.path.isdir(os.path.join(path, item)) and getUserFromFolder(item)  is not None ]
     except OSError:
         print("ERROR: Recollection of users in %s failed" % path)
     return res
 
 
-def createUsersfolder(user_comp_path,uslist):
+def createUsersfolder(user_comp_path,uslist,prefix=""):
 
     if not os.path.exists(user_comp_path):
         os.makedirs(user_comp_path)
     for user in uslist:
-        user_full_path=os.path.join(user_comp_path,str(user))
+        user_full_path=generateUserPath(user_comp_path,user)
         try:
             os.mkdir(user_full_path)
         except OSError:
@@ -42,7 +58,7 @@ def createUsersInfo(user_comp_path,usersinfo):
 
     #userlist=getUserslistFromDir(user_comp_path)
     for user, info in usersinfo.items():
-        user_full_path = os.path.join(user_comp_path, str(user))
+        user_full_path = generateUserPath(user_comp_path,user)
         try:
             os.mkdir(user_full_path)
         except OSError:

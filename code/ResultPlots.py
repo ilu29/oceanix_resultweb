@@ -60,3 +60,6 @@ def plot_arrayimg(array):
 def plotUserResults(results):
 	plot_seq(results["testplot"][0],results["testplot"][1])
 	plot_arrayimg(results["dummyimage"][0])
+
+
+

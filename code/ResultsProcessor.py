@@ -10,7 +10,7 @@ def generateDummyResults(usersfolder):
 
     for user in users_list:
         #dummy graph
-        user_path=os.path.join(usersfolder, str(user))
+        user_path=UserFiles.generateUserPath(usersfolder,user)
         file_path=os.path.join(user_path, "dummyplot.npz")
         data_y = np.random.rand(10)
         data_x = np.arange(10)
@@ -33,7 +33,7 @@ def generateDummyResults(usersfolder):
 def OpenUserResult(usersfolder,user):
     res_filedict={"testplot": "dummyplot.npz","score":"score.npz","dummyimage":"image.npz"}
 
-    user_path = os.path.join(usersfolder, str(user))
+    user_path = UserFiles.generateUserPath(usersfolder,user)
     result={}
 
     for resultname, filename in res_filedict.items():
