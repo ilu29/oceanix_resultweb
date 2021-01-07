@@ -62,6 +62,10 @@ res= ResultsProcessor.OpenUserResult(usersfolder, "lili23")
 
 #print("score of %s is :%d"%("carlos",res["score"][0]))
 
-plt.contourf(res["dummyimage"][0])
-plt.show()
+#plt.contourf(res["dummyimage"][0])
+#plt.show()
+print("!"+UserFiles.getUserFromFolder("jupyter-ilan ")+"!")
 
+path="/../home"
+res=[ item for item in os.listdir(path) if os.path.isdir(os.path.join(path, item))]
+print(res)

@@ -47,6 +47,20 @@ def main():
 			st.table(df)
 
 		if (len(option))is not 0:
+
+			fig, ax = plt.subplots()
+
+			# Plot the data
+			for user in option:
+				plt.plot(user_results[user]["testplot"][0], user_results[user]["testplot"][1], label=user)
+
+			# Add a legend
+			plt.legend()
+			ax.set_title(r'Result from notebook')
+
+			# Tweak spacing to prevent clipping of ylabel
+			fig.tight_layout()
+			st.pyplot(fig)
 			for user in option:
 				my_expander = st.beta_expander("Results of %s" % user)
 				with my_expander:
