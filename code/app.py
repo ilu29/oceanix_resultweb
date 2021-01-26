@@ -2,9 +2,12 @@ import pandas as pd
 import os
 import datetime
 from ResultPlots import *
+from PIL import Image
+from httpx_oauth.clients.google import GoogleOAuth2
 
 import ResultsProcessor
 import UserFiles
+
 
 
 
@@ -18,13 +21,24 @@ def main():
 	users_info = UserFiles.getUsersInfo(usersfolder, users_list)
 	user_results = ResultsProcessor.GetUserResults(usersfolder, users_list)
 	"""Simple Login App"""
-	st.title("My app ("+str(datetime.datetime.now())+")")
+	st.set_page_config(layout="wide")
+	st.title("Oceanix Data Challenge")
 
-	menu = ["Home"]
+
+	st.sidebar.image(Image.open("imgs/im-datawave.jpg"),use_column_width=True)
+
+	menu = ["Home","Results"]
 	choice = st.sidebar.selectbox("Menu",menu)
 
-
 	if choice == "Home":
+		st.image(Image.open("imgs/hackpromotion.jpg"), use_column_width=True)
+		st.write("Welcome to the Oceanix data challenge. We are happy to recieve your submissions.")
+		st.write(
+			"Please PUSH all your files in the following repository:\n "
+			"https://github.com/CIA-Oceanix/2020a_IMT_SSH_mapping_NATL60")
+		st.write(
+			"Check out this [link](https://rfablet.github.io/) for more information on OceaniX. ")
+	if choice == "Results":
 		st.subheader("Participant List")
 
 		row_array=[]
@@ -67,22 +81,6 @@ def main():
 
 
 					plotUserResults(user_results[user])
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
