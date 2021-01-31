@@ -32,7 +32,7 @@ def plot_arrayimg(array):
 
 		# Add a legend
 		plt.legend()
-		ax.set_title(r'Map simulation')
+		ax.set_title(r'Map simulation (temp)')
 
 		# Tweak spacing to prevent clipping of ylabel
 		import io

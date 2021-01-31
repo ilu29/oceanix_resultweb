@@ -175,7 +175,7 @@ def main():
 			fig.savefig(buf, format='png')
 			st.image(buf)
 
-			
+
 		if (len(option)) > 0:
 			cols = st.beta_columns(len(option))
 			for usr_ind in range(len(option)):
