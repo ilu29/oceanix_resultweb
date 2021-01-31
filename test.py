@@ -69,3 +69,26 @@ print("!"+UserFiles.getUserFromFolder("jupyter-ilan ")+"!")
 path="/../home"
 res=[ item for item in os.listdir(path) if os.path.isdir(os.path.join(path, item))]
 print(res)
+
+
+
+import http.client
+
+#c = http.client.HTTPConnection("www.github.com/CIA-Oceanix/2020a_IMT_SSH_mapping_NATL60")
+#c.request("HEAD", '')
+    #if c.getresponse().status == 200:
+     #   print("success")
+
+
+import urllib.request
+
+req = urllib.request.Request("https://www.github.com/CIA-Oceanix/2020a_IMT_SSH_mapping_NATL60")
+with urllib.request.urlopen(req) as response:
+   the_page = response.read()
+
+
+
+import re
+pattern = re.compile("https://www.github.com/\S*")
+isgiturl = pattern.match("https://www.github.com/CIA-Oceanix/2020a_IMT_SSH_mapping_NATL60")
+print(isgiturl)

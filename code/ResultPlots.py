@@ -3,45 +3,26 @@ import numpy as np
 import matplotlib.pyplot as plt
 import streamlit as st
 
-def test_plot(level):
-	# example data
-	mu = 100  # mean of distribution
-	sigma = 15  # standard deviation of distribution
-	x = mu + sigma * np.random.randn(437)
 
-	num_bins = 50
 
-	fig, ax = plt.subplots()
+def plot_seq(x,y,labels=None):
 
-	# Prepare the data
-	x = np.linspace(0, 10, 100)
-	y=(x/x)*level
+	if not isinstance(x[0], list):
 
-	# Plot the data
-	plt.plot(x, y, label='linear')
+		fig, ax = plt.subplots()
 
-	# Add a legend
-	plt.legend()
-	ax.set_title(r'Histogram of user privilege')
+		# Plot the data
+		plt.plot(x,y, label='linear')
 
-	# Tweak spacing to prevent clipping of ylabel
-	fig.tight_layout()
-	st.pyplot(fig)
+		# Add a legend
+		plt.legend()
+		ax.set_title(r'Results')
 
-def plot_seq(x,y):
+		import io
+		buf = io.BytesIO()
+		fig.savefig(buf, format='png')
+		return buf
 
-	fig, ax = plt.subplots()
-
-	# Plot the data
-	plt.plot(x,y, label='linear')
-
-	# Add a legend
-	plt.legend()
-	ax.set_title(r'Result from notebook')
-
-	# Tweak spacing to prevent clipping of ylabel
-	fig.tight_layout()
-	st.pyplot(fig)
 
 def plot_arrayimg(array):
 		fig, ax = plt.subplots()
@@ -54,12 +35,17 @@ def plot_arrayimg(array):
 		ax.set_title(r'Map simulation')
 
 		# Tweak spacing to prevent clipping of ylabel
-		fig.tight_layout()
-		st.pyplot(fig)
+		import io
+		buf = io.BytesIO()
+		fig.savefig(buf, format='png')
+		return buf
+
+
 
 def plotUserResults(results):
-	plot_seq(results["testplot"][0],results["testplot"][1])
-	plot_arrayimg(results["dummyimage"][0])
+	res1=plot_seq(results["testplot"][0],results["testplot"][1])
+	res2=plot_arrayimg(results["dummyimage"][0])
+	return res1,res2
 
 
 

@@ -7,8 +7,10 @@ from httpx_oauth.clients.google import GoogleOAuth2
 
 import ResultsProcessor
 import UserFiles
+import SessionState
 
-
+session_state = SessionState.get(capnum=0,repo_submitted=False)
+SessionState.repo_submitted=False
 
 
 def main():
@@ -27,7 +29,7 @@ def main():
 
 	st.sidebar.image(Image.open("imgs/im-datawave.jpg"),use_column_width=True)
 
-	menu = ["Home","Results"]
+	menu = ["Home","Results","Submission"]
 	choice = st.sidebar.selectbox("Menu",menu)
 
 	if choice == "Home":
@@ -38,6 +40,98 @@ def main():
 			"https://github.com/CIA-Oceanix/2020a_IMT_SSH_mapping_NATL60")
 		st.write(
 			"Check out this [link](https://rfablet.github.io/) for more information on OceaniX. ")
+
+	if choice == "Submission":
+
+		st.write("Enter GitHub URL with your code to participate:")
+		if SessionState.repo_submitted:
+			st.write('Already submited!!!')
+		else:
+			repo_url = st.text_input("enter link", "https://www.github.com/CIA-Oceanix/2020a_IMT_SSH_mapping_NATL60")
+
+
+
+			from captcha.image import ImageCaptcha
+
+
+			image = ImageCaptcha()
+			import random
+			if session_state.capnum==0:
+				session_state.capnum=random.randint(1000, 10000)
+			data = image.generate(str(session_state.capnum))
+			st.image(data)
+			col1, ca,cb,cc= st.beta_columns(4)
+			with col1:
+				captcha_usr_in = st.text_input("enter captcha",max_chars=4)
+
+			#st.write(captcha_usr_in)
+			#st.write(str(session_state.capnum))
+
+
+
+			import re
+
+
+
+			def check_form(user_captcha,url):
+
+				pattern = re.compile("https://www.github.com/\S*")
+				isgiturl = pattern.match(url)
+				#st.write(isgiturl)
+				if isgiturl is not None:
+					isgiturl = True
+				else:
+					isgiturl = False
+					st.error('Invalid REGEX!!!')
+
+				valid_captcha = False
+				if str(session_state.capnum) == user_captcha:
+					valid_captcha = True
+				else:
+					st.error('Invalid CAPTCHA!!!')
+
+				valid_url = False
+				try:
+					import urllib.request
+
+					req = urllib.request.Request(url)
+					with urllib.request.urlopen(req) as response:
+						valid_url = True
+						#st.write('Submited!!!')
+						#verified_subm_form=True
+				except:
+					st.error('Cannot connect to URL!!!')
+
+				if isgiturl and valid_url and valid_captcha:
+					return True
+				else:
+					return False
+
+
+
+
+
+			if st.button('Submit'):
+				if check_form(captcha_usr_in, repo_url):
+					st.info('Submited!!!')
+					if SessionState.repo_submitted==True:
+						st.write('Already submitted!!!')
+					else:
+						SessionState.repo_submitted=True
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	if choice == "Results":
 		st.subheader("Participant List")
 
@@ -46,9 +140,9 @@ def main():
 			row_array.append([user,users_info[user]["name"],users_info[user]["lastname"],results["score"][0]])
 
 
-
+		st.write("Search for user in the following bar by typing user name:")
 		option = st.multiselect(
-		'search for user',users_list)
+		'',users_list)
 
 
 
@@ -60,27 +154,35 @@ def main():
 		else:
 			st.table(df)
 
-		if (len(option))is not 0:
-
+		if (len(option))>1:
+			st.subheader("Comaprison of users")
 			fig, ax = plt.subplots()
-
+			#fig.update_layout(width=400, height=400)
 			# Plot the data
 			for user in option:
-				plt.plot(user_results[user]["testplot"][0], user_results[user]["testplot"][1], label=user)
+				ax.plot(user_results[user]["testplot"][0], user_results[user]["testplot"][1], label=user)
 
 			# Add a legend
-			plt.legend()
+			ax.legend()
 			ax.set_title(r'Result from notebook')
 
 			# Tweak spacing to prevent clipping of ylabel
-			fig.tight_layout()
-			st.pyplot(fig)
-			for user in option:
-				my_expander = st.beta_expander("Results of %s" % user)
-				with my_expander:
+			#fig.tight_layout()
+			#st.pyplot(fig)
 
+			import io
+			buf = io.BytesIO()
+			fig.savefig(buf, format='png')
+			st.image(buf)
 
-					plotUserResults(user_results[user])
+			
+		if (len(option)) > 0:
+			cols = st.beta_columns(len(option))
+			for usr_ind in range(len(option)):
+				cols[usr_ind].subheader("Results of %s"%(option[usr_ind]))
+				res1,res2=plotUserResults(user_results[option[usr_ind]])
+				cols[usr_ind].image(res1)
+				cols[usr_ind].image(res2)
 
 
 
