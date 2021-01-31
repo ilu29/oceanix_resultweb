@@ -5,9 +5,11 @@ import streamlit as st
 
 
 
-def plot_seq(x,y,labels=None):
+def plot_seq(x,y,label='None'):
+	import io
+	buf = io.BytesIO()
 
-	if not isinstance(x[0], list):
+	if not isinstance(x[0], (list,np.ndarray)):
 
 		fig, ax = plt.subplots()
 
@@ -18,10 +20,22 @@ def plot_seq(x,y,labels=None):
 		plt.legend()
 		ax.set_title(r'Results')
 
-		import io
-		buf = io.BytesIO()
 		fig.savefig(buf, format='png')
-		return buf
+
+
+	else:
+		fig, ax = plt.subplots()
+		# fig.update_layout(width=400, height=400)
+
+		for i in range(len(label)):
+			print(label[i])
+			ax.plot(x[i], y[i], label=label[i])
+
+		ax.legend()
+		ax.set_title(r'Result from notebook')
+
+		fig.savefig(buf, format='png')
+	return buf
 
 
 def plot_arrayimg(array):
@@ -31,7 +45,7 @@ def plot_arrayimg(array):
 		plt.contourf(array)
 
 		# Add a legend
-		plt.legend()
+		#plt.legend()
 		ax.set_title(r'Map simulation (delete)')
 
 		# Tweak spacing to prevent clipping of ylabel

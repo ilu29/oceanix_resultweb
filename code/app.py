@@ -12,12 +12,14 @@ import SessionState
 session_state = SessionState.get(capnum=0,repo_submitted=False)
 SessionState.repo_submitted=False
 
+wd = os.getcwd()
+usersfolder = os.path.join(wd, "generatedData/Users")  # Users folder, absolute path
+
 
 def main():
 	np.random.seed(19680801)
 
-	wd = os.getcwd()
-	usersfolder = os.path.join(wd, "generatedData/Users")  # Users folder, absolute path
+
 
 	users_list = UserFiles.getUserslistFromDir(usersfolder)
 	users_info = UserFiles.getUsersInfo(usersfolder, users_list)
@@ -118,6 +120,11 @@ def main():
 						st.write('Already submitted!!!')
 					else:
 						SessionState.repo_submitted=True
+						with open("submissions.txt", "a") as myfile:
+							from datetime import date
+
+							today = date.today().strftime("%m/%d/%Y, %H:%M:%S")
+							myfile.writelines("%s\n" % l for l in [today, repo_url,''])
 
 
 
@@ -156,24 +163,12 @@ def main():
 
 		if (len(option))>1:
 			st.subheader("Comaprison of users")
-			fig, ax = plt.subplots()
-			#fig.update_layout(width=400, height=400)
-			# Plot the data
-			for user in option:
-				ax.plot(user_results[user]["testplot"][0], user_results[user]["testplot"][1], label=user)
 
-			# Add a legend
-			ax.legend()
-			ax.set_title(r'Result from notebook')
-
-			# Tweak spacing to prevent clipping of ylabel
-			#fig.tight_layout()
-			#st.pyplot(fig)
-
-			import io
-			buf = io.BytesIO()
-			fig.savefig(buf, format='png')
-			st.image(buf)
+			#	ax.plot(user_results[user]["testplot"][0], user_results[user]["testplot"][1], label=user)
+			x=[user_results[user]["testplot"][0] for user in option]
+			y = [user_results[user]["testplot"][1] for user in option]
+			res=plot_seq(x,y,option)
+			st.image(res)
 
 
 		if (len(option)) > 0:
@@ -183,8 +178,6 @@ def main():
 				res1,res2=plotUserResults(user_results[option[usr_ind]])
 				cols[usr_ind].image(res1)
 				cols[usr_ind].image(res2)
-
-
 
 
 
