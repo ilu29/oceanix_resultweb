@@ -31,7 +31,7 @@ def generateDummyResults(usersfolder):
 
 
 def OpenUserResult(usersfolder,user):
-    res_filedict={"testplot": "dummyplot.npz","score":"score.npz","dummyimage":"image.npz"}
+    res_filedict={"rmsplot": "rms_plot.npz","freqplot": "freq_plot.npz","score":"score.npz","implot":"im_plot.npz"}
 
     user_path = UserFiles.generateUserPath(usersfolder,user)
     result={}

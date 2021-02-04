@@ -9,6 +9,8 @@ import ResultsProcessor
 import UserFiles
 import SessionState
 
+import participant
+
 session_state = SessionState.get(capnum=0,repo_submitted=False)
 SessionState.repo_submitted=False
 
@@ -21,9 +23,7 @@ def main():
 
 
 
-	users_list = UserFiles.getUserslistFromDir(usersfolder)
-	users_info = UserFiles.getUsersInfo(usersfolder, users_list)
-	user_results = ResultsProcessor.GetUserResults(usersfolder, users_list)
+	users = participant.createParticipantDir(usersfolder)
 	"""Simple Login App"""
 	st.set_page_config(layout="wide")
 	st.title("Oceanix Data Challenge")
@@ -143,8 +143,10 @@ def main():
 		st.subheader("Participant List")
 
 		row_array=[]
-		for user, results in user_results.items():
-			row_array.append([user,users_info[user]["name"],users_info[user]["lastname"],results["score"][0]])
+		users_list=[]
+		for user, data in users.items():
+			row_array.append([data.userid,data.name,data.lastname])
+			users_list.append(data.userid)
 
 
 		st.write("Search for user in the following bar by typing user name:")
@@ -153,9 +155,8 @@ def main():
 
 
 
-		df = pd.DataFrame(row_array, columns=['User',"Name","Last Name" ,'Score'])
+		df = pd.DataFrame(row_array, columns=['User',"Name","Last Name"])
 		if (len(option))is not 0:
-			print("User selected:%s" % option[0])
 			search_df=df[df['User'].isin(option) ]
 			st.table(search_df)
 		else:
@@ -164,10 +165,12 @@ def main():
 		if (len(option))>1:
 			st.subheader("Comaprison of users")
 
-			#	ax.plot(user_results[user]["testplot"][0], user_results[user]["testplot"][1], label=user)
-			x=[user_results[user]["testplot"][0] for user in option]
-			y = [user_results[user]["testplot"][1] for user in option]
-			res=plot_seq(x,y,option)
+			seqgroup=[users[opt].openUserNpz_serie("rms_plot.npz") for opt in option ]
+			res=plotMultSeq(seqgroup, type="linear")
+			st.image(res)
+
+			seqgroup = [users[opt].openUserNpz_serie("freq_plot.npz") for opt in option]
+			res = plotMultSeq(seqgroup, type="frequence")
 			st.image(res)
 
 
@@ -175,9 +178,13 @@ def main():
 			cols = st.beta_columns(len(option))
 			for usr_ind in range(len(option)):
 				cols[usr_ind].subheader("Results of %s"%(option[usr_ind]))
-				res1,res2=plotUserResults(user_results[option[usr_ind]])
+				res1=plotSingSeq(users[option[usr_ind]].openUserNpz_serie("rms_plot.npz"),type="linear")
+				res2 = plotSingSeq(users[option[usr_ind]].openUserNpz_serie("freq_plot.npz"), type="frequence")
 				cols[usr_ind].image(res1)
 				cols[usr_ind].image(res2)
+				value = cols[usr_ind].slider("slider"+str(usr_ind), 0, 2, 0, 1)
+				res3 = plot_arrayimg(users[option[usr_ind]].openUserNpz("im_plot.npz")[value, :, :])
+				cols[usr_ind].image(res3)
 
 
 
