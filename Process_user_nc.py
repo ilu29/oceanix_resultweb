@@ -140,10 +140,18 @@ def avg_err_raPsd2dv1(img3d, img3dref, res, hanning):
     return f_, Pf
 
 
-def processUserReconstruction(rec_file,GTfile,output_dir,test_index,plot_index):
-    GT = xr.open_dataset(GTfile).ssh.values[test_index]
+def processUserReconstruction(varnm_usr,varnm_gt,rec_file,GTfile,output_dir,test_index,plot_index):
+    GT=None
+    itrp_RECON=None
+    lcls = locals()
+    exec("""GT=xr.open_dataset(GTfile)."""+varnm_gt+""".values[test_index]""",globals(), lcls)
+    GT = lcls["GT"]
 
-    itrp_RECON = xr.open_dataset(rec_file).FP_GENN.values
+    #itrp_RECON = xr.open_dataset(rec_file).FP_GENN.values
+
+    lcls = locals()
+    exec("""itrp_RECON=xr.open_dataset(rec_file).""" + varnm_usr + """.values""", globals(), lcls)
+    itrp_RECON = lcls["itrp_RECON"]
 
     nrmse_RECON = np.zeros(len(GT))
 
@@ -185,6 +193,6 @@ indN_Tt = np.concatenate([np.arange(60,80),np.arange(140,160),\
 usr_nc_directory="generatedData/Users/jupyter-carl456/FP_GENN.nc"
 ref_nc_directory="generatedData/Users/jupyter-carl456/ref.nc"
 output_dir="generatedData/Users/jupyter-carl456/"
-frames_index=np.arange(50,55)
+frames_index=np.arange(50,59)
 
-processUserReconstruction(usr_nc_directory,ref_nc_directory,output_dir,indN_Tt,frames_index)
+processUserReconstruction("FP_GENN","ssh",usr_nc_directory,ref_nc_directory,output_dir,indN_Tt,frames_index)
