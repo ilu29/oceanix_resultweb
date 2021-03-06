@@ -6,6 +6,9 @@ import UserFiles
 
 
 def SubmissionTab(SessionState, session_state):
+    captcha_usr_in=None
+
+
     st.write("Enter Submission URL with your code to participate:")
     if SessionState.repo_submitted:
         st.write('Already submited!!!')
