@@ -32,7 +32,7 @@ def plotMultSeq(seqgroup, type="frequence"):
 	for seq in seqgroup:
 
 		ax.plot(seq["x"], seq["y"], label=seq["label"])
-		print("label %s" % seq["label"])
+		#print("label %s" % seq["label"])
 
 	if type == "linear":
 		BaseSequence_PlotConfig(plt, ax)
@@ -95,7 +95,7 @@ def plot_freqseq(x,y,label='None'):
 		# fig.update_layout(width=400, height=400)
 
 		for i in range(len(label)):
-			print(label[i])
+			#print(label[i])
 			ax.plot(x[i], y[i], label=label[i])
 
 		ax.legend()

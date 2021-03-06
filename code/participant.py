@@ -3,6 +3,7 @@ import os
 import json
 import numpy as np
 
+from config import *
 
 class ParticipantUser:
 
@@ -20,7 +21,7 @@ class ParticipantUser:
     def openUserNpz(self,fname,name=''):
         container = np.load(os.path.join(self.directory, fname))
         data = [container[key] for key in container][0]
-        res=data
+        res = data
         #self.results[name]= res
         return res
 
@@ -32,13 +33,37 @@ class ParticipantUser:
         #self.results[name]= res
         return res
 
-def createParticipantDir(dir):
+
+def createParticipant(dir):
+    mandatoyFiles={"info.json","freq_plot.npz","rms_plot.npz","im_plot.npz"}
+    for fn in mandatoyFiles:
+        if  not os.path.exists(os.path.join(dir,fn)):
+            return None
+    return ParticipantUser(dir)
+
+def getParticipantDir(dir):
 
     tempdir={}
 
-    templist = [ParticipantUser(os.path.join(dir,item)) for item in os.listdir(dir)]
+    templist = []
+
+    for item in os.listdir(dir):
+        p=createParticipant(os.path.join(dir,item))
+        if p is not None or not IGNORE_IF_MISSING_FILES:
+            templist.append(p)
     for item in templist:
             tempdir[item.userid]=item
 
 
     return tempdir
+
+
+def createTemplateInfos(dir):
+    #print("Analysing existence of info.json in user folders")
+    for d in os.listdir(dir):
+        #print(os.path.join(dir,d,"info.json"))
+        if not os.path.exists(os.path.join(dir,d,"info.json")):
+            #print("Creating a dummy file in"+d)
+            duminfo={'name':'dummyname','lastname':'dummylastname','userid':'dummyid'}
+            with open(os.path.join(dir,d,"info.json"), 'w') as outfile:
+                json.dump(duminfo, outfile)
