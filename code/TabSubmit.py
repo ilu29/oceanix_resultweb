@@ -1,5 +1,6 @@
 import streamlit as st
 from config import *
+from captcha.image import ImageCaptcha
 import ResultsProcessor
 import UserFiles
 
@@ -12,7 +13,7 @@ def SubmissionTab(SessionState, session_state):
         repo_url = st.text_input("enter link", "https://www.github.com/CIA-Oceanix/2020a_IMT_SSH_mapping_NATL60")
 
         if REQ_CAPTCHA:
-            from captcha.image import ImageCaptcha
+
 
             image = ImageCaptcha()
             import random
