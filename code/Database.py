@@ -2,15 +2,21 @@ import mysql.connector
 import sqlite3
 
 import hashlib
+
+#Ceate a hash from current password
 def make_hashes(password):
 	return hashlib.sha256(str.encode(password)).hexdigest()
 
+
+#Hashed password comparison
 def check_hashes(password,hashed_text):
 	if make_hashes(password) == hashed_text:
 		return hashed_text
 	return False
 
+#Class dedicated to storing
 class User_MYSQL_Database():
+
 
   cursor=None
   connection=None
@@ -23,7 +29,7 @@ class User_MYSQL_Database():
     self.user =user
     self.password = password
     self.database = database
-
+    #Connection to database
   def connect(self):
 
       self.connection = mysql.connector.connect(
@@ -61,7 +67,7 @@ class User_MYSQL_Database():
 
 
 
-
+#SQLite version of the database class
 class User_SQLite_Database():
 
   cursor=None
@@ -91,6 +97,7 @@ class User_SQLite_Database():
       self.connection.commit()
 
   def login_user(self,username,password):
+      #Can we find the specified hashed password and username pair
       self.cursor.execute('SELECT * FROM userstable WHERE username =? AND password = ?',(username,password))
       data = self.cursor.fetchall()
       return data
@@ -101,11 +108,11 @@ class User_SQLite_Database():
       data = self.cursor.fetchall()
       return data
 
-
+#User authentication logic
 def UserAuth(userdb,st,choice,pd):
     if choice == "Login":
         st.subheader("Login Section")
-
+        #Print LOGIN form
         username = st.sidebar.text_input("User Name")
         password = st.sidebar.text_input("Password", type='password')
         if st.sidebar.checkbox("Login"):
@@ -127,7 +134,9 @@ def UserAuth(userdb,st,choice,pd):
                     st.subheader("Analytics")
                 elif task == "Profiles":
                     st.subheader("User Profiles")
+                    #show all users
                     user_result = userdb.view_all_users()
+                    #SQL result to dataframe
                     clean_db = pd.DataFrame(user_result, columns=["Username", "Password", "Level"])
                     st.dataframe(clean_db)
             else:
@@ -140,7 +149,9 @@ def UserAuth(userdb,st,choice,pd):
         new_level = st.text_input("Level")
 
         if st.button("Signup"):
+            #Xreate table
             userdb.create_usertable()
+            #Upload user data
             userdb.add_userdata(new_user, make_hashes(new_password), new_level)
             st.success("You have successfully created a valid Account")
             st.info("Go to Login Menu to login")

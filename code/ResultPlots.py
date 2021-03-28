@@ -3,6 +3,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import streamlit as st
 
+
+
+#Helper plotting functions
+
 def FreqSequence_PlotConfig(plt,ax):
 	# Add a legend
 	plt.legend()
@@ -22,7 +26,7 @@ def BaseSequence_PlotConfig(plt,ax):
 		plt.legend()
 		ax.set_title(r'Results')
 
-
+#Plot multiple sequences inside the same plot, for comparing participants
 def plotMultSeq(seqgroup, type="frequence"):
 	import io
 	buf = io.BytesIO()
@@ -42,6 +46,7 @@ def plotMultSeq(seqgroup, type="frequence"):
 
 	return buf
 
+#Single sequence plotting logic
 def plotSingSeq(seq, type="frequence"):
 	import io
 	buf = io.BytesIO()

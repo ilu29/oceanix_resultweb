@@ -1,6 +1,7 @@
 import streamlit as st
 from PIL import Image
 
+#Home tab giving welcome message to participants
 def HomeTab():
 	st.image(Image.open("imgs/hackpromotion.jpg"), use_column_width=True)
 	st.write("Welcome to the Oceanix data challenge. We are happy to recieve your submissions.")

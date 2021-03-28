@@ -140,7 +140,7 @@ def avg_err_raPsd2dv1(img3d, img3dref, res, hanning):
     return f_, Pf
 
 
-def processUserReconstruction(varnm_usr,varnm_gt,rec_file,GTfile,output_dir,test_index,plot_index):
+def processUserReconstruction(varnm_usr,varnm_gt,rec_file,GTfile,output_dir,test_index,plot_index,lon_min,lon_max,lat_min,lat_max):
     GT=None
     itrp_RECON=None
     lcls = locals()
@@ -156,8 +156,8 @@ def processUserReconstruction(varnm_usr,varnm_gt,rec_file,GTfile,output_dir,test
     nrmse_RECON = np.zeros(len(GT))
 
     for i in range(0, len(GT)):
-        gt = GT[i, :200, :200]
-        RECON = itrp_RECON[i, :200, :200]
+        gt = GT[i, lon_min:lon_max,  lat_min:lat_max]
+        RECON = itrp_RECON[i,  lon_min:lon_max,  lat_min:lat_max]
         nrmse_RECON[i] = (np.sqrt(np.nanmean(((gt - np.nanmean(gt)) - (RECON - np.nanmean(RECON))) ** 2))) / np.nanstd(gt)
 
     # plot nRMSE time series
@@ -165,7 +165,7 @@ def processUserReconstruction(varnm_usr,varnm_gt,rec_file,GTfile,output_dir,test
 
     # Plot averaged normalize error RAPS
 
-    f0, Pf_RECON = avg_err_raPsd2dv1(itrp_RECON[:, :200, :200], GT[:, :200, :200], 4, True)
+    f0, Pf_RECON = avg_err_raPsd2dv1(itrp_RECON[:,  lon_min:lon_max,  lat_min:lat_max], GT[:,  lon_min:lon_max,  lat_min:lat_max], 4, True)
     wf0 = 1 / f0
 
     rms_seq = np.vstack((range(N), nrmse_RECON))
@@ -175,11 +175,11 @@ def processUserReconstruction(varnm_usr,varnm_gt,rec_file,GTfile,output_dir,test
     freq_seq = np.vstack((wf0[1:], Pf_RECON[1:]))
     np.savez(os.path.join(output_dir,"freq_plot.npz"), freq_seq)
     print("Frequency data generated...")
-    res_im_group = np.zeros((len(plot_index), 200, 200))
+    res_im_group = np.zeros((len(plot_index), lon_max-lon_min, lat_max-lat_min))
     #offset = 50
     for i in plot_index:
         print("Saving frame: ",i)
-        gt = GT[i  , :200, :200]
+        gt = GT[i  , lon_min:lon_max,  lat_min:lat_max]
         Grad_gt = Gradient(gt, 2)
         res_im_group[i-plot_index.min(), :, :] = Grad_gt
 
@@ -190,9 +190,16 @@ indN_Tt = np.concatenate([np.arange(60,80),np.arange(140,160),\
                              np.arange(220,240),np.arange(300,320)])  # index of evaluation period
 
 
+#Configuration for user data generation
 usr_nc_directory="generatedData/Users/jupyter-carl456/FP_GENN.nc"
 ref_nc_directory="generatedData/Users/jupyter-carl456/ref.nc"
 output_dir="generatedData/Users/jupyter-carl456/"
+dataVar_usr="FP_GENN"
+dataVar_gt="ssh"
 frames_index=np.arange(50,59)
+lon_min=0
+lon_max=150
+lat_min=0
+lat_max=150
 
-processUserReconstruction("FP_GENN","ssh",usr_nc_directory,ref_nc_directory,output_dir,indN_Tt,frames_index)
+processUserReconstruction(dataVar_usr,dataVar_gt,usr_nc_directory,ref_nc_directory,output_dir,indN_Tt,frames_index,lon_min,lon_max,lat_min,lat_max)

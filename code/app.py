@@ -18,7 +18,7 @@ usersfolder = os.path.join(wd, USR_FOLDER_DIR)  # Users folder, absolute path
 def main():
 	np.random.seed(19680801)
 
-	participant.createTemplateInfos(usersfolder)
+	#participant.createTemplateInfos(usersfolder)
 	users = participant.getParticipantDir(usersfolder)
 
 	"""Simple Login App"""
